@@ -1,0 +1,60 @@
+job_moi_2024_07_25_14_43_17_7ty2_1:
+  default_args:
+    owner: 'data-platform'
+    start_date: 2023-07-31 00:00:00
+    end_date:
+    retries: 3
+    retry_delay_sec: 60
+    timezone: 'Asia/Saigon'
+  schedule_interval:
+  concurrency: 1
+  max_active_runs: 1
+  dagrun_timeout_sec:
+  default_view: 'tree'
+  orientation: 'LR'
+  description: 'Job_mới_2024-07-25_14:43:17'
+  tasks:
+    weather_data_j7ng:
+      task_id: 'weather_data_j7ng'
+      operator: 'utils.operators.http_operator.CustomHttpOperator'
+      execution_timeout_secs: 600
+      retries: 0
+      retry_delay: 0
+      trigger_rule: 'all_success'
+      dependencies: []
+      endpoint: '/data/2.5/weather'
+      method: 'GET'
+      data:
+      - key: lat
+        value: 23.0
+      - key: lon
+        value: 29.0
+      - key: appid
+        value: fa832938ff15c290520cc1e18437f8bb
+      headers: {}
+      http_conn_id: 'https___api.openweathermap.org'
+      do_xcom_push: true
+    gui_mail_vxmm:
+      task_id: 'gui_mail_vxmm'
+      operator: 'airflow.operators.email.EmailOperator'
+      execution_timeout_secs: 600
+      retries: 0
+      retry_delay: 0
+      trigger_rule: 'all_success'
+      dependencies:
+      - weather_data_j7ng
+      to:
+      - haidanganh6@gmail.com
+      subject: 'Thời tiết'
+      cc:
+      html_content: 'Xin chào !
+
+        Nhiệt độ hôm nay là {{ ti.xcom_pull(task_ids=''weather_data_j7ng'', key=''return_value'')["body"]["main"]["temp"]
+        }}'
+      conn_id: 'email_conn_id'
+      mime_subtype: 'mixed'
+      mime_charset: 'utf-8'
+  catchup: false
+  tags:
+  - bbec9b06-893e-487f-b316-df2b52fb384e
+  template_searchpath: []
