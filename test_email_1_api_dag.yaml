@@ -1,0 +1,27 @@
+test_email_1_api:
+  default_args:
+    owner: 'data-platform'
+    start_date: 2024-06-14 09:37:30
+    end_date:
+    retries: 1
+    retry_delay_sec: 60
+    timezone: 'Asia/Saigon'
+  schedule_interval: '@once'
+  concurrency: 1
+  max_active_runs: 1
+  dagrun_timeout_sec:
+  default_view: 'tree'
+  orientation: 'LR'
+  description: 'Job_task_sql_1'
+  tasks:
+    email_1:
+      operator: 'airflow.operators.email.EmailOperator'
+      conn_id: 'email_conn_id'
+      to: 'xiaoclone1@gmail.com'
+      subject: 'Task has completed successfully!!'
+      html_content: 'The task has completed successfully'
+      dependencies: []
+  catchup: false
+  tags:
+  - test_api
+  template_searchpath: []
