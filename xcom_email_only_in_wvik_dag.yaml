@@ -1,0 +1,54 @@
+xcom_email_only_in_wvik:
+  default_args:
+    owner: 'data-platform'
+    start_date: 2024-05-19
+    end_date:
+    retries: 3
+    retry_delay_sec: 60
+    timezone: 'Asia/Saigon'
+  schedule_interval:
+  concurrency: 1
+  max_active_runs: 1
+  dagrun_timeout_sec:
+  default_view: 'tree'
+  orientation: 'LR'
+  description: 'xcom_email_only_in'
+  tasks:
+    bash_1_stlx:
+      task_id: 'bash_1_stlx'
+      operator: 'airflow.operators.bash.BashOperator'
+      execution_timeout_secs: 10
+      retries: 0
+      retry_delay: 0
+      trigger_rule: 'all_success'
+      dependencies: []
+      bash_command: '#!/bin/bash
+
+        echo "task bash_2 should print this out"
+
+        '
+      env:
+        '': ''
+    email_xcom_pull_xtqf:
+      task_id: 'email_xcom_pull_xtqf'
+      operator: 'airflow.operators.email.EmailOperator'
+      execution_timeout_secs: 600
+      retries: 0
+      retry_delay: 0
+      trigger_rule: 'all_success'
+      dependencies:
+      - bash_1_stlx
+      to:
+      - xiaoclone1@gmail.com
+      subject: 'Headers {{ ti.xcom_pull(task_ids=''bash_1_stlx'', key=''return_value'')
+        }}'
+      cc:
+      html_content: 'Content {{ ti.xcom_pull(task_ids=''bash_1_stlx'', key=''return_value'')
+        }}'
+      conn_id: 'email_conn_id'
+      mime_subtype: 'mixed'
+      mime_charset: 'utf-8'
+  catchup: false
+  tags:
+  - bbec9b06-893e-487f-b316-df2b52fb384e
+  template_searchpath: []
