@@ -1,0 +1,93 @@
+job_moi_2024_08_28_15_07_41_fqgr:
+  default_args:
+    owner: 'data-platform'
+    start_date: 2023-08-29 00:00:00
+    end_date:
+    retries: 3
+    retry_delay_sec: 60
+    timezone: 'Asia/Saigon'
+  schedule_interval: '0 0 28 8 *'
+  concurrency: 1
+  max_active_runs: 1
+  dagrun_timeout_sec:
+  default_view: 'tree'
+  orientation: 'LR'
+  description: 'new'
+  tasks:
+    mail_1_uc2n:
+      task_id: 'mail_1_uc2n'
+      operator: 'airflow.operators.email.EmailOperator'
+      execution_timeout_secs: 600
+      retries: 0
+      retry_delay: 0
+      trigger_rule: 'all_success'
+      dependencies:
+      - phan_nhanh_quaf
+      to:
+      - bonboncntt@gmail.com
+      subject: 'test 1'
+      cc:
+      html_content: 'test'
+      conn_id: 'email_conn_id'
+      mime_subtype: 'mixed'
+      mime_charset: 'utf-8'
+    phan_nhanh_quaf:
+      op_args:
+      - - subject: '1'
+          target: '1'
+          operator: ==
+          ds_tasks:
+          - mail_1_uc2n
+        - subject: '1'
+          target: '1'
+          operator: '!='
+          ds_tasks:
+          - mail_2_wqln
+      task_id:
+      operator: 'airflow.operators.python.BranchPythonOperator'
+      execution_timeout_secs: 600
+      retries: 0
+      retry_delay: 0
+      trigger_rule: 'all_success'
+      dependencies: []
+      python_callable_name: 'branching'
+      python_callable_file: '/opt/airflow/dags/repo/utils/scripts/branching_func.py'
+      do_xcom_push: false
+    mail_2_copy_2024_08_29_17_26_28_uut1:
+      task_id: 'mail_2_copy_2024_08_29_17_26_28_uut1'
+      operator: 'airflow.operators.email.EmailOperator'
+      execution_timeout_secs: 600
+      retries: 0
+      retry_delay: 0
+      trigger_rule: 'all_success'
+      dependencies:
+      - phan_nhanh_quaf
+      to:
+      - bonbon@gmail.com
+      subject: 'test'
+      cc:
+      html_content: 'test'
+      conn_id: 'email_conn_id'
+      mime_subtype: 'mixed'
+      mime_charset: 'utf-8'
+    mail_2_wqln:
+      task_id: 'mail_2_wqln'
+      operator: 'airflow.operators.email.EmailOperator'
+      execution_timeout_secs: 600
+      retries: 0
+      retry_delay: 0
+      trigger_rule: 'all_success'
+      dependencies:
+      - phan_nhanh_quaf
+      to:
+      - bonbon@gmail.com
+      subject: 'test'
+      cc:
+      html_content: 'test'
+      conn_id: 'email_conn_id'
+      mime_subtype: 'mixed'
+      mime_charset: 'utf-8'
+  catchup: false
+  tags:
+  - 9b9eb011-04ce-49c8-99ee-7c4d52861736
+  template_searchpath: []
